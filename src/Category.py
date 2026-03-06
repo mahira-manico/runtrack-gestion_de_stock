@@ -37,7 +37,7 @@ class Category:
         finally:
          self.connection.disconnect_cursor()
     
-    def update(self, column,id, new_value):
+    def update(self, column, new_value,id):
 
         try:
          if column not in ["name"]:
