@@ -12,19 +12,15 @@ class GlitterApp(ctk.CTk):
         self.geometry("1200x800")
         self.minsize(800,600)
 
-        self.grid_rowconfigure(0, weight=1)  
+        self.grid_rowconfigure(2, weight=1)  
         self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=1)
         
         self.dashboard_frame=Dashboard(master=self)
-        self.dashboard_frame.grid(row=0, column=1, sticky="nsew", padx=20, pady=20)
+        self.dashboard_frame.grid(row=2, column=0, sticky="nsew", padx=20, pady=20)
         self.dashboard_frame.grid_columnconfigure(0, weight=1)
         
         self.stats_frame=Stats(master=self)
-        self.stats_frame.grid(row=0, column=2, sticky="ew", pady=(0, 20))
-
-        self.sidebar_frame=SideBar(master=self)
-        self.sidebar_frame.grid(row=0, column=0,sticky="nsew")
+        self.stats_frame.grid(row=0, column=0, sticky="ew", padx=20,pady=20)
 
 class Stats(ctk.CTkFrame):
 
@@ -48,7 +44,7 @@ class Dashboard(ctk.CTkFrame):
         self.add_button.pack(side="right", padx=10)
 
         self.scrollable_list = ctk.CTkScrollableFrame(self, label_text="Live Inventory")
-        self.scrollable_list.grid(row=2, column=0, sticky="nsew", pady=10)
+        self.scrollable_list.grid(row=2, column=0, sticky="nsew", padx=20, pady=20)
 
         self.refresh_products()
 
@@ -65,7 +61,7 @@ class Dashboard(ctk.CTkFrame):
         if products:
          for i in products:
              row=ctk.CTkFrame(self.scrollable_list)
-             row.pack(fill="x",pady=5)
+             row.pack(fill="x", expand=True,pady=5,padx=10)
 
              ctk.CTkLabel(row, text=i["name"],width=200).pack(side="left",pady=20)
              ctk.CTkLabel(row,text=i["description"],width=100).pack(side="left")
@@ -115,17 +111,3 @@ class AddProduct(ctk.CTkToplevel):
                 self.refresh()
                 self.destroy()
 
-class SideBar(ctk.CTkFrame):
-    
-    def __init__(self,master):
-        super().__init__(master)
-
-        self.label = ctk.CTkLabel(self, text="GlitterApp", fg_color="transparent")
-        self.label.grid(row=1, column=0, pady=20)
-
-        self.inventory_button=ctk.CTkButton(self, text="Inventory")
-        self.inventory_button.grid(row=2,column=0,padx=20,pady=(10,10))
-
-        self.dashboard_button=ctk.CTkButton(self, text="Dashboard")
-        self.dashboard_button.grid(row=3,column=0,padx=20,pady=10)
-        
