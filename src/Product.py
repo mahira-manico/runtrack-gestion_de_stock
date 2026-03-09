@@ -1,7 +1,8 @@
-from database import Data
+from database.connection import Data
 
 class Product:
     def __init__(self):
+
         self.connection=Data()
         self.cursor=self.connection.cursor()
 
@@ -16,14 +17,14 @@ class Product:
             return False
         
         finally:
-            self.connection.disconnect_cursor()
+            self.connection.disconnect_cursor(self.cursor)
             return result
         
     def add(self, name, description, price, quantity, id_category):
         
         try:
-            request="INSERT INTO product (name, description, price, quantity, id_category) VALUES=%s,%s,%s,%s,%s"
-            values=name, description, price, quantity, id_category
+            request="INSERT INTO product (name, description, price, quantity, id_category) VALUES=(%s,%s,%s,%s,%s)"
+            values=(name, description, price, quantity, id_category)
             self.cursor.execute(request, values)
             self.connection.commit()
             return True
@@ -33,7 +34,7 @@ class Product:
             return False
         
         finally:
-            self.connection.disconnect_cursor()
+            self.connection.disconnect_cursor(self.cursor)
     
     def update(self, column, new_value, id):
         
@@ -42,7 +43,7 @@ class Product:
                 return False
             
             request=f"UPDATE product SET {column}=%s WHERE id=%s"
-            values=new_value, id
+            values=(new_value, id)
             self.cursor.execute(request, values)
             self.connection.commit()
             return True
@@ -52,7 +53,7 @@ class Product:
             return False
         
         finally:
-            self.connection.disconnect_cursor()
+            self.connection.disconnect_cursor(self.cursor)
 
     def delete(self, id):
         
@@ -68,7 +69,7 @@ class Product:
             return False
         
         finally:
-            self.connection.disconnect_cursor()
+            self.connection.disconnect_cursor(self.cursor)
 
 
 

@@ -12,25 +12,18 @@ class Data:
             password="Banane1001#",
             database="store"
         )
-        if self.mydb.is_connected():           
-         return True
       except Exception as e:
          print(f"Error while connecting: {e}")
-         return False
     
     def cursor(self):
-       if self.mydb and self.my.is_connected():
-          return self.mydb.cursor(dictionnary=True)
-       else:
-          return None
+       if self.mydb and self.mydb.is_connected():
+          return self.mydb.cursor(dictionary=True)       
         
     
     def commit(self):
      if self.mydb and self.mydb.is_connected():
        self.mydb.commit()
-     else:
-        return None
-    
+   
     def disconnect_cursor(self,cursor):
         if self.mydb and self.mydb.is_connected():
            if cursor:
