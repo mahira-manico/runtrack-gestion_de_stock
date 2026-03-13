@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from src.Product import Product
+from src.Category import Category
 
 class GlitterApp(ctk.CTk):
     
@@ -7,6 +8,7 @@ class GlitterApp(ctk.CTk):
         super().__init__()
 
         self.products=Product()
+        self.categories=Category()
         
         self.title("GlitterGestion App")
         self.geometry("1200x800")
@@ -34,6 +36,7 @@ class Dashboard(ctk.CTkFrame):
         super().__init__(master)
     
         self.products=master.products
+        self.categories=master.categories
         self.action_bar=ctk.CTkFrame(self, fg_color="transparent")
         self.action_bar.grid(row=1, column=0, sticky="ew", pady=10)
 
@@ -48,23 +51,38 @@ class Dashboard(ctk.CTkFrame):
         self.scrollable_list = ctk.CTkScrollableFrame(self, label_text="Live Inventory")
         self.scrollable_list.grid(row=2, column=0, sticky="nsew", padx=20, pady=20)
 
-        self.delete_button=ctk.CTkButton(self.action_bar, text="- Delete a Product", command=self.delete_window)
+        self.delete_button=ctk.CTkButton(self.action_bar, text="Delete a Product", command=self.delete_window)
         self.delete_button.pack(side="right",padx=20)
 
         self.update_button=ctk.CTkButton(self.action_bar, text="Update", command=self.update_pr)
         self.update_button.pack(side="right",padx=20)
 
+        categories=["ALL"] + self.categories.get_name()
+        self.category_menu=ctk.CTkOptionMenu(self.action_bar, values=categories, command=self.filter_by_categories)
+        self.category_menu.pack(side="left", padx=0)
+
         self.refresh_products()
 
+    def filter_by_categories(self,choice):
+        if choice=="ALL":
+            self.refresh_products()
+        
+        else:
+            result=self.products.get_category(choice)
+            self.refresh_products(products=result)
+
+    
     def search(self):
         letter=self.search_entry.get()
         result=self.products.get_product(letter)
         
         if not letter:
+            self.refresh_products(products=None)
             return
         
         if result is not None:
             self.refresh_products(products=result)
+        
     
     def update_pr(self):
         UpdateProduct(master=self, refresh_product=self.refresh_products)
@@ -97,19 +115,26 @@ class Dashboard(ctk.CTkFrame):
 class UpdateProduct(ctk.CTkToplevel):
     def __init__(self, master, refresh_product):
         super().__init__(master)
+        self.lift()
+        self.focus_force()
         self.title("Update a Product Here!")
-        self.geometry("400x500")
+        self.update_idletasks() 
+        width=400
+        height=500
+        x=(self.winfo_screenwidth()//2)-(width//2)
+        y=(self.winfo_screenheight()//2)-(height//2)
+        self.geometry(f"{width}x{height}+{x}+{y}")
         self.refresh=refresh_product
         self.products=master.products
 
         ctk.CTkLabel(self, text="Choose a column to modify: ").pack(pady=(20,5))
-        self.column_entry=ctk.CTkOptionMenu(self, values=["name","description","price","quantity"])
+        self.column_entry=ctk.CTkOptionMenu(self, values=["name","description","price","quantity"],width=200)
         self.column_entry.pack()
         
         self.id_entry=ctk.CTkEntry(self, placeholder_text="Take the ID of the product to modify",width=200)
-        self.id_entry.pack(pady=10)
+        self.id_entry.pack(pady=20)
 
-        self.change_entry=ctk.CTkEntry(self, placeholder_text="Type your entry")
+        self.change_entry=ctk.CTkEntry(self, placeholder_text="Type your entry",width=200)
         self.change_entry.pack(pady=20)
 
         self.save_button=ctk.CTkButton(self, text="Save", command=self.update_product)
@@ -136,8 +161,15 @@ class UpdateProduct(ctk.CTkToplevel):
 class DeleteProduct(ctk.CTkToplevel):
     def __init__(self, master, refresh_product):
         super().__init__(master)
+        self.lift()
+        self.focus_force()
         self.title("Delete a Product Here!")
-        self.geometry("400x300")
+        self.update_idletasks()  
+        width=400
+        height=300
+        x=(self.winfo_screenwidth()//2)-(width//2)
+        y=(self.winfo_screenheight()//2)-(height//2)
+        self.geometry(f"{width}x{height}+{x}+{y}")
         self.refresh=refresh_product
         self.products=master.products
 
@@ -169,8 +201,15 @@ class DeleteProduct(ctk.CTkToplevel):
 class AddProduct(ctk.CTkToplevel):
         def __init__(self, master,refresh_product):
             super().__init__(master)
+            self.lift()
+            self.focus_force()
             self.title("Add new Products to GlitterApp!")
-            self.geometry("400x500")
+            self.update_idletasks() 
+            width=400
+            height=500
+            x=(self.winfo_screenwidth()//2)-(width//2)
+            y=(self.winfo_screenheight()//2)-(height//2)
+            self.geometry(f"{width}x{height}+{x}+{y}")
             self.refresh=refresh_product
             self.products=master.products
         

@@ -10,8 +10,7 @@ class Product:
         
         try:
             self.cursor.execute("SELECT * FROM product")
-            result=self.cursor.fetchall()
-            return result
+            return self.cursor.fetchall()
 
         except Exception as e:
             print(f"Error: {e}")
@@ -23,8 +22,8 @@ class Product:
             request="SELECT * FROM product WHERE name LIKE %s"
             value=(f"%{letter}%",)
             self.cursor.execute(request, value)
-            result=self.cursor.fetchall()
-            return result
+            return self.cursor.fetchall()
+            
         
         except Exception as e:
             print(f"Error: {e}")
@@ -79,6 +78,15 @@ class Product:
             print(f"Error: {e}")
             return False
    
+    def get_category(self, name):
+
+        try:
+            self.cursor.execute("SELECT product.* FROM product INNER JOIN category ON product.id_category=category.id WHERE category.name=%s",(name,))
+            return self.cursor.fetchall()
+        
+        except Exception as e:
+            print(f"Error: {e}")
+            return False
 
 
 
