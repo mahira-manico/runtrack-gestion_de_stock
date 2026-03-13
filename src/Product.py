@@ -48,6 +48,10 @@ class Product:
     def update(self, column, new_value, id):
         
         try:    
+            self.cursor.execute("SELECT id from product WHERE id=%s",(id,))
+            if self.cursor.fetchone() is None:
+              return False
+
             request=f"UPDATE product SET {column}=%s WHERE id=%s"
             values=(new_value, id)
             self.cursor.execute(request, values)
@@ -61,6 +65,10 @@ class Product:
     def delete(self, id):
         
         try:
+            self.cursor.execute("SELECT id from product WHERE id=%s",(id,))
+            if self.cursor.fetchone() is None:
+                return False
+            
             request="DELETE FROM product WHERE id=%s"
             value=(id,)
             self.cursor.execute(request, value)

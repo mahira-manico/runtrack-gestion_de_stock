@@ -51,15 +51,23 @@ class Dashboard(ctk.CTkFrame):
         self.delete_button=ctk.CTkButton(self.action_bar, text="- Delete a Product", command=self.delete_window)
         self.delete_button.pack(side="right",padx=20)
 
+        self.update_button=ctk.CTkButton(self.action_bar, text="Update", command=self.update_pr)
+        self.update_button.pack(side="right",padx=20)
+
         self.refresh_products()
 
     def search(self):
         letter=self.search_entry.get()
         result=self.products.get_product(letter)
         
+        if not letter:
+            return
+        
         if result is not None:
             self.refresh_products(products=result)
-
+    
+    def update_pr(self):
+        UpdateProduct(master=self, refresh_product=self.refresh_products)
 
     def add_window(self):
         AddProduct(master=self, refresh_product=self.refresh_products)
@@ -86,6 +94,46 @@ class Dashboard(ctk.CTkFrame):
              ctk.CTkLabel(row,text=f"{i['price']}$",width=100).pack(side="right")
              ctk.CTkLabel(row,text=f"Stock: {i['quantity']}",width=100).pack(side="left")
 
+class UpdateProduct(ctk.CTkToplevel):
+    def __init__(self, master, refresh_product):
+        super().__init__(master)
+        self.title("Update a Product Here!")
+        self.geometry("400x500")
+        self.refresh=refresh_product
+        self.products=master.products
+
+        ctk.CTkLabel(self, text="Choose a column to modify: ").pack(pady=(20,5))
+        self.column_entry=ctk.CTkOptionMenu(self, values=["name","description","price","quantity"])
+        self.column_entry.pack()
+        
+        self.id_entry=ctk.CTkEntry(self, placeholder_text="Take the ID of the product to modify",width=200)
+        self.id_entry.pack(pady=10)
+
+        self.change_entry=ctk.CTkEntry(self, placeholder_text="Type your entry")
+        self.change_entry.pack(pady=20)
+
+        self.save_button=ctk.CTkButton(self, text="Save", command=self.update_product)
+        self.save_button.pack(pady=20)
+
+    def update_product(self):
+        column=self.column_entry.get()
+        new_value=self.change_entry.get()
+        id=int(self.id_entry.get())
+
+        if not column or not new_value or not id:
+            return 
+        
+        result=self.products.update(column,new_value,id)
+
+        if result:
+            print(result)
+            self.refresh()
+            self.destroy()
+        
+        else:
+            ctk.CTkLabel(self, text="ID not Found or Error",text_color="red").pack()
+            print(result)
+
 class DeleteProduct(ctk.CTkToplevel):
     def __init__(self, master, refresh_product):
         super().__init__(master)
@@ -102,15 +150,17 @@ class DeleteProduct(ctk.CTkToplevel):
         self.save_button=ctk.CTkButton(self, text="Save to Database", command=self.delete_product)
         self.save_button.pack(pady=20)
         
-
     def delete_product(self):
 
         id=self.id_entry.get()
 
+        if not id:
+            return
+
         entry=self.products.delete(int(id))
 
         if entry:
-            print("product succesfully deleted!")
+            ctk.CTkLabel(self,text="product succesfully deleted!",text_color="green").pack()
             self.refresh()
             self.destroy()
 
@@ -149,6 +199,8 @@ class AddProduct(ctk.CTkToplevel):
             quantity=self.quantity_entry.get()
             category=self.category_entry.get()
 
+            if not name or not description or not price or not quantity or not category:
+                return
             
             entries=self.products.add(name, description, int(price),int(quantity), int(category))
 
