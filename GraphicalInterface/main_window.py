@@ -132,7 +132,6 @@ class UpdateProduct(ctk.CTkToplevel):
         
         else:
             ctk.CTkLabel(self, text="ID not Found or Error",text_color="red").pack()
-            print(result)
 
 class DeleteProduct(ctk.CTkToplevel):
     def __init__(self, master, refresh_product):
@@ -160,9 +159,12 @@ class DeleteProduct(ctk.CTkToplevel):
         entry=self.products.delete(int(id))
 
         if entry:
-            ctk.CTkLabel(self,text="product succesfully deleted!",text_color="green").pack()
+            ctk.CTkLabel(self,text="Product succesfully deleted!",text_color="green").pack()
             self.refresh()
             self.destroy()
+        
+        else:
+            ctk.CTkLabel(self, text="ID not found or Error",text_color="red").pack()
 
 class AddProduct(ctk.CTkToplevel):
         def __init__(self, master,refresh_product):
@@ -205,8 +207,11 @@ class AddProduct(ctk.CTkToplevel):
             entries=self.products.add(name, description, int(price),int(quantity), int(category))
 
             if entries:
-                print("product added!")
+                ctk.CTkLabel(self, text=f"{name} added to inventory!", text_color="green").pack
                 self.refresh()
                 self.destroy()
+            
+            else:
+                ctk.CTkLabel(self, text="Synthax Error or Error", text_color="red").pack()
 
     

@@ -34,7 +34,7 @@ class Product:
     def add(self, name, description, price, quantity, id_category):
         
         try:
-            request="INSERT INTO product (name, description, price, quantity, id_category) VALUES=(%s,%s,%s,%s,%s)"
+            request="INSERT INTO product (name, description, price, quantity, id_category) VALUES (%s,%s,%s,%s,%s)"
             values=(name, description, price, quantity, id_category)
             self.cursor.execute(request, values)
             self.connection.commit()
