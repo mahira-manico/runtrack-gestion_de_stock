@@ -1,11 +1,16 @@
 import customtkinter as ctk
 from src.Product import Product
 from src.Category import Category
+from src.constant import *
+import csv
 
 class GlitterApp(ctk.CTk):
     
     def __init__(self):
         super().__init__()
+        
+        ctk.set_appearance_mode("dark")
+        self.configure(fg_color=BG_DARK)
 
         self.products=Product()
         self.categories=Category()
@@ -14,20 +19,18 @@ class GlitterApp(ctk.CTk):
         self.geometry("1200x800")
         self.minsize(800,600)
 
-        self.grid_rowconfigure(2, weight=1)  
-        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)  
+        self.grid_columnconfigure(1, weight=1)
+
+        self.sidebar=Sidebar(master=self)
+        self.sidebar.grid(row=0, column=0, sticky="ns", padx=(10,0), pady=10)
         
         self.dashboard_frame=Dashboard(master=self)
-        self.dashboard_frame.grid(row=2, column=0, sticky="nsew", padx=20, pady=20)
+        self.dashboard_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
         self.dashboard_frame.grid_columnconfigure(0, weight=1)
+
         
-        self.stats_frame=Stats(master=self)
-        self.stats_frame.grid(row=0, column=0, sticky="ew", padx=20,pady=20)
-
-class Stats(ctk.CTkFrame):
-
-    def __init__(self, master):
-        super().__init__(master)
+        self.sidebar.set_dashboard(self.dashboard_frame)
 
 
 class Dashboard(ctk.CTkFrame):
@@ -37,29 +40,25 @@ class Dashboard(ctk.CTkFrame):
     
         self.products=master.products
         self.categories=master.categories
+
+        self.grid_rowconfigure(2, weight=1)  
+        self.grid_columnconfigure(0, weight=1)
+
         self.action_bar=ctk.CTkFrame(self, fg_color="transparent")
         self.action_bar.grid(row=1, column=0, sticky="ew", pady=10)
 
-        self.search_entry=ctk.CTkEntry(self.action_bar, placeholder_text="Search a product (Dior, Fenty...)", width=400)
+        self.search_entry=ctk.CTkEntry(self.action_bar, placeholder_text="🔍 Search a product (Dior, Fenty...)", width=250, height=38, fg_color=BG_CARD, border_color=PINK, text_color=TEXT)
         self.search_entry.pack(side="left", padx=10)
-        self.entry_button=ctk.CTkButton(self.action_bar, text="Search",command=self.search)
-        self.entry_button.pack(side="left")
 
-        self.add_button = ctk.CTkButton(self.action_bar, text="+ Add Product", fg_color="#E91E63", command=self.add_window)
-        self.add_button.pack(side="right", padx=10)
+        self.entry_button=ctk.CTkButton(self.action_bar, text="Search", fg_color=BG_CARD, border_color=PINK, text_color=TEXT, command=self.search)
+        self.entry_button.pack(side="left", padx=10)
 
-        self.scrollable_list = ctk.CTkScrollableFrame(self, label_text="Live Inventory")
+        self.scrollable_list = ctk.CTkScrollableFrame(self, label_text="✨ Inventory", label_font=ctk.CTkFont(family="Georgia", size=14, weight="bold"), label_text_color=GOLD, fg_color=BG_CARD, scrollbar_button_color=PINK)
         self.scrollable_list.grid(row=2, column=0, sticky="nsew", padx=20, pady=20)
 
-        self.delete_button=ctk.CTkButton(self.action_bar, text="Delete a Product", command=self.delete_window)
-        self.delete_button.pack(side="right",padx=20)
-
-        self.update_button=ctk.CTkButton(self.action_bar, text="Update", command=self.update_pr)
-        self.update_button.pack(side="right",padx=20)
-
         categories=["ALL"] + self.categories.get_name()
-        self.category_menu=ctk.CTkOptionMenu(self.action_bar, values=categories, command=self.filter_by_categories)
-        self.category_menu.pack(side="left", padx=0)
+        self.category_menu=ctk.CTkOptionMenu(self.action_bar,  fg_color=BG_CARD, button_color=PINK, button_hover_color=PINK_DARK, text_color=TEXT, values=categories, command=self.filter_by_categories)
+        self.category_menu.pack(side="left", padx=10)
 
         self.refresh_products()
 
@@ -82,6 +81,17 @@ class Dashboard(ctk.CTkFrame):
         
         if result is not None:
             self.refresh_products(products=result)
+    
+    def export(self):
+        products=self.products.get_all()
+
+        if not products:
+            return
+        
+        with open("products.csv","w",newline="",encoding="utf-8") as f:
+            writer=csv.DictWriter(f,fieldnames=products[0].keys())
+            writer.writeheader()
+            writer.writerows(products)
         
     
     def update_pr(self):
@@ -103,18 +113,61 @@ class Dashboard(ctk.CTkFrame):
          
         if products:
          for i in products:
-             row=ctk.CTkFrame(self.scrollable_list)
-             row.pack(fill="x", expand=True,pady=5,padx=10)
+             row=ctk.CTkFrame(self.scrollable_list, fg_color=BG_DARK, corner_radius=10, border_width=1, border_color="#2A2A4A") 
+             row.pack(fill="x", expand=True, pady=4, padx=10)
  
-             ctk.CTkLabel(row, text=i["id"],width=200).pack(side="left",pady=20)
-             ctk.CTkLabel(row, text=i["name"],width=200).pack(side="left",pady=20)
-             ctk.CTkLabel(row,text=i["description"],width=100).pack(side="left")
-             ctk.CTkLabel(row,text=f"{i['price']}$",width=100).pack(side="right")
-             ctk.CTkLabel(row,text=f"Stock: {i['quantity']}",width=100).pack(side="left")
+             ctk.CTkLabel(row, text=f"#{i['id']}", width=60, text_color=GOLD, font=ctk.CTkFont(weight="bold")).pack(side="left", pady=15, padx=10)
+             ctk.CTkLabel(row, text=i["name"], width=200, text_color=TEXT, font=ctk.CTkFont(size=13, weight="bold")).pack(side="left")
+             ctk.CTkLabel(row, text=i["description"], width=200, text_color=TEXT_MUTED).pack(side="left")
+             ctk.CTkLabel(row, text=f"{i['price']}$", width=80, text_color=PINK, font=ctk.CTkFont(weight="bold")).pack(side="right", padx=10)
+             ctk.CTkLabel(row, text=f"Stock: {i['quantity']}", width=100, text_color=TEXT_MUTED).pack(side="right")
+
+class Sidebar(ctk.CTkFrame):
+
+    def __init__(self, master):
+        super().__init__(master, width=180, fg_color=BG_SIDEBAR, corner_radius=5)
+
+        self.grid_propagate(False) 
+        self.dashboard = None 
+
+        ctk.CTkLabel(self, text="✨ GlitterApp", font=ctk.CTkFont(family="Georgia", size=24, weight="bold"),
+    text_color=GOLD).pack(pady=(30, 5))
+
+        self.add_btn = ctk.CTkButton(self, text="✦ Add Product", fg_color=PINK, hover_color=PINK_DARK, font=ctk.CTkFont(weight="bold"), corner_radius=8, height=40, command=self.add)       
+        self.add_btn.pack(pady=10, padx=15)
+
+        self.delete_btn = ctk.CTkButton(self, text="✦ Delete Product",  fg_color=PINK, hover_color=PINK_DARK, font=ctk.CTkFont(weight="bold"), corner_radius=8, height=40, command=self.delete)
+        self.delete_btn.pack(pady=10, padx=15)
+
+        self.update_btn = ctk.CTkButton(self, text="✦ Update Product",  fg_color=PINK, hover_color=PINK_DARK, font=ctk.CTkFont(weight="bold"), corner_radius=8, height=40, command=self.update)
+        self.update_btn.pack(pady=10, padx=15)
+
+        self.export_btn = ctk.CTkButton(self, text="⬇ Export CSV",  fg_color=PINK, hover_color=PINK_DARK, font=ctk.CTkFont(weight="bold"), corner_radius=8, height=40, command=self.export)
+        self.export_btn.pack(pady=10, padx=15)
+
+    def set_dashboard(self, dashboard):
+        self.dashboard=dashboard
+
+    def add(self):
+        if self.dashboard:
+            self.dashboard.add_window()
+
+    def delete(self):
+        if self.dashboard:
+            self.dashboard.delete_window()
+
+    def update(self):
+        if self.dashboard:
+            self.dashboard.update_pr()
+
+    def export(self):
+        if self.dashboard:
+            self.dashboard.export()
 
 class UpdateProduct(ctk.CTkToplevel):
     def __init__(self, master, refresh_product):
         super().__init__(master)
+        self.configure(fg_color=BG_DARK)
         self.lift()
         self.focus_force()
         self.title("Update a Product Here!")
@@ -126,19 +179,21 @@ class UpdateProduct(ctk.CTkToplevel):
         self.geometry(f"{width}x{height}+{x}+{y}")
         self.refresh=refresh_product
         self.products=master.products
-
-        ctk.CTkLabel(self, text="Choose a column to modify: ").pack(pady=(20,5))
-        self.column_entry=ctk.CTkOptionMenu(self, values=["name","description","price","quantity"],width=200)
-        self.column_entry.pack()
         
-        self.id_entry=ctk.CTkEntry(self, placeholder_text="Take the ID of the product to modify",width=200)
-        self.id_entry.pack(pady=20)
+        ctk.CTkLabel(self, text="✨ Update Product", font=ctk.CTkFont(family="Georgia", size=20, weight="bold"), text_color=GOLD).pack(pady=(30, 5))
+        ctk.CTkLabel(self, text="Choose a column", font=ctk.CTkFont(family="Georgia", size=12, weight="bold"),text_color=GOLD).pack(pady=(20, 5))
 
-        self.change_entry=ctk.CTkEntry(self, placeholder_text="Type your entry",width=200)
-        self.change_entry.pack(pady=20)
+        self.column_entry=ctk.CTkOptionMenu(self, values=["name","description","price","quantity"], fg_color=BG_CARD, button_color=PINK, button_hover_color=PINK_DARK,text_color=TEXT, width=280, height=38)
+        self.column_entry.pack(pady=(0, 15))
+        
+        self.id_entry=ctk.CTkEntry(self, placeholder_text="Take the ID of the product to modify", fg_color=BG_CARD, border_color=PINK, text_color=TEXT, width=280, height=38)
+        self.id_entry.pack(pady=(0, 15))
 
-        self.save_button=ctk.CTkButton(self, text="Save", command=self.update_product)
-        self.save_button.pack(pady=20)
+        self.change_entry=ctk.CTkEntry(self, placeholder_text="Type your entry", fg_color=BG_CARD, border_color=PINK, text_color=TEXT, width=280, height=38)
+        self.change_entry.pack(pady=(0, 15))
+
+        self.save_button=ctk.CTkButton(self, text="Save", fg_color=PINK, hover_color=PINK_DARK, font=ctk.CTkFont(weight="bold"), corner_radius=8, command=self.update_product, width=280, height=44)
+        self.save_button.pack(pady=(25, 0))
 
     def update_product(self):
         column=self.column_entry.get()
@@ -161,6 +216,7 @@ class UpdateProduct(ctk.CTkToplevel):
 class DeleteProduct(ctk.CTkToplevel):
     def __init__(self, master, refresh_product):
         super().__init__(master)
+        self.configure(fg_color=BG_DARK)
         self.lift()
         self.focus_force()
         self.title("Delete a Product Here!")
@@ -173,13 +229,15 @@ class DeleteProduct(ctk.CTkToplevel):
         self.refresh=refresh_product
         self.products=master.products
 
-        ctk.CTkLabel(self, text="Delete a Product").pack(pady=20)
+        ctk.CTkLabel(self, text="🗑 Delete a Product", font=ctk.CTkFont(family="Georgia", size=20, weight="bold"), text_color=GOLD).pack(pady=(30, 20))
 
-        self.id_entry=ctk.CTkEntry(self, placeholder_text="Enter Product ID",width=300)
+        self.id_entry=ctk.CTkEntry(self, placeholder_text="Enter Product ID", fg_color=BG_CARD, border_color=PINK, text_color=TEXT, width=280, height=38)
+        self.id_entry.pack(pady=(0, 15))
+
         self.id_entry.pack(pady=10)
 
-        self.save_button=ctk.CTkButton(self, text="Save to Database", command=self.delete_product)
-        self.save_button.pack(pady=20)
+        self.save_button=ctk.CTkButton(self, text="Delete from Database", fg_color=PINK, hover_color=PINK_DARK, font=ctk.CTkFont(weight="bold"), corner_radius=8, width=280, height=44, command=self.delete_product)
+        self.save_button.pack(pady=(25, 0))
         
     def delete_product(self):
 
@@ -201,6 +259,7 @@ class DeleteProduct(ctk.CTkToplevel):
 class AddProduct(ctk.CTkToplevel):
         def __init__(self, master,refresh_product):
             super().__init__(master)
+            self.configure(fg_color=BG_DARK)
             self.lift()
             self.focus_force()
             self.title("Add new Products to GlitterApp!")
@@ -213,25 +272,27 @@ class AddProduct(ctk.CTkToplevel):
             self.refresh=refresh_product
             self.products=master.products
         
-            ctk.CTkLabel(self,text="Add a new product").pack(pady=20)
+            ctk.CTkLabel(self,text="✦ Add a new product", font=ctk.CTkFont(family="Georgia", size=20, weight="bold"), text_color=GOLD).pack(pady=(30, 20))
 
-            self.name_entry=ctk.CTkEntry(self,placeholder_text="Enter a name", width=300)
+            self.name_entry=ctk.CTkEntry(self,placeholder_text="Enter a name", fg_color=BG_CARD, border_color=PINK, text_color=TEXT, width=280, height=38)
+            self.name_entry.pack(pady=(0, 15))
+
             self.name_entry.pack(pady=10)
 
-            self.description_entry=ctk.CTkEntry(self,placeholder_text="Enter a description",width=300)  
-            self.description_entry.pack(pady=10)
+            self.description_entry=ctk.CTkEntry(self,placeholder_text="Enter a description", fg_color=BG_CARD, border_color=PINK, text_color=TEXT, width=280, height=38)
+            self.description_entry.pack(pady=(0, 15)) 
             
-            self.price_entry=ctk.CTkEntry(self, placeholder_text="Enter a price", width=300)
-            self.price_entry.pack(pady=10)
-
-            self.quantity_entry=ctk.CTkEntry(self, placeholder_text="Enter a quantity", width=300)
-            self.quantity_entry.pack(pady=10)
-
-            self.category_entry=ctk.CTkEntry(self, placeholder_text="Enter an ID category", width=300)
-            self.category_entry.pack(pady=10)
-
-            self.save_button=ctk.CTkButton(self, text="Save to Database", command=self.sumbit_data)
-            self.save_button.pack(pady=30)
+            self.price_entry=ctk.CTkEntry(self, placeholder_text="Enter a price", fg_color=BG_CARD, border_color=PINK, text_color=TEXT, width=280, height=38)
+            self.price_entry.pack(pady=(0, 15))
+        
+            self.quantity_entry=ctk.CTkEntry(self, placeholder_text="Enter a quantity", fg_color=BG_CARD, border_color=PINK, text_color=TEXT, width=280, height=38)
+            self.quantity_entry.pack(pady=(0, 15))
+   
+            self.category_entry=ctk.CTkEntry(self, placeholder_text="Enter an ID category", fg_color=BG_CARD, border_color=PINK, text_color=TEXT, width=280, height=38)
+            self.category_entry.pack(pady=(0, 15))
+     
+            self.save_button=ctk.CTkButton(self, text="Save to Database", fg_color=PINK, hover_color=PINK_DARK, font=ctk.CTkFont(weight="bold"), corner_radius=8, width=280, height=44, command=self.sumbit_data)
+            self.save_button.pack(pady=(25, 0))
 
         def sumbit_data(self):
             name=self.name_entry.get()
@@ -246,7 +307,7 @@ class AddProduct(ctk.CTkToplevel):
             entries=self.products.add(name, description, int(price),int(quantity), int(category))
 
             if entries:
-                ctk.CTkLabel(self, text=f"{name} added to inventory!", text_color="green").pack
+                ctk.CTkLabel(self, text=f"{name} added to inventory!", text_color="green").pack()
                 self.refresh()
                 self.destroy()
             
