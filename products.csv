@@ -1,0 +1,51 @@
+id,name,description,price,quantity,id_category
+1,Dior Sauvage,"Eau de Toilette, 100ml",125,40,3
+2,Chanel No. 5,"Eau de Parfum Spray, 50ml",135,15,3
+3,YSL Libre,"Floral Lavender & Orange Blossom, 90ml",155,30,3
+4,Tom Ford Lost Cherry,"Private Blend Luxury Scent, 30ml",250,10,3
+5,Bleu de Chanel,Powerful and Refined Men Fragrance,110,40,3
+6,Marc Jacobs Daisy,Fresh and Feminine Floral Scent,105,55,3
+7,Giorgio Armani Si,Modern and Chic Chypre Fragrance,128,22,3
+8,Viktor&Rolf Flowerbomb,"Explosive Floral Bouquet, 50ml",115,18,3
+9,Fenty Foundation,Pro Filt'r Soft Matte Longwear,40,100,2
+10,Rare Beauty Blush,"Soft Pinch Liquid Blush, Joy",23,150,2
+11,Too Faced Mascara,Better Than Sex Volumizing Black,29,200,2
+12,Charlotte Tilbury,Hollywood Flawless Filter Primer,49,45,2
+13,NARS Radiant Creamy,"Long-lasting Concealer, Custard",32,80,2
+14,Huda Beauty Palette,The New Nude Eyeshadow Palette,69,35,2
+15,Anastasia Brow Wiz,Ultra-slim Retractable Pencil,25,120,2
+16,Urban Decay Spray,"All Nighter Setting Spray, 118ml",36,95,2
+17,Drunk Elephant,"Protini Polypeptide Cream, 50ml",68,60,1
+18,The Ordinary,Hyaluronic Acid 2% + B5 Serum,9,500,1
+19,La Mer Cream,"Crème de la Mer Moisturizer, 30ml",190,15,1
+20,Glow Recipe,Watermelon Glow PHA + BHA Toner,34,75,1
+21,Estée Lauder,Advanced Night Repair Serum,125,40,1
+22,Kiehl's Cream,Ultra Facial Cream Moisturizer,38,110,1
+23,Laneige Mask,"Lip Sleeping Mask, Berry",24,180,1
+24,Sunday Riley,Good Genes Lactic Acid Treatment,85,28,1
+25,Olaplex No. 3,Hair Perfector Repair Treatment,30,140,4
+26,Dyson Airwrap,Complete Long Multi-Styler,599,12,4
+27,Gisou Hair Oil,"Honey Infused Hair Oil, 50ml",46,50,4
+28,Briogeo Mask,"Don't Despair, Repair! Deep Mask",39,65,4
+29,Kérastase Elixir,L'Huile Originale Hair Oil,54,42,4
+30,Beautyblender,The Original Makeup Sponge,20,300,6
+31,Sephora Brush,PRO Foundation Brush #56,30,85,6
+32,Foreo Luna 4,Smart Facial Cleansing Device,279,20,6
+33,Tweezerman,Slant Tweezer Classic Stainless,24,150,6
+34,Slip Silk Scrunchie,Pure Silk Large Hair Tie Set,39,110,6
+35,Beard Oil,Jack Black Beard Oil with Vitamin E,28,45,7
+36,Face Wash Men,Kiehl's Facial Fuel Energizing Wash,25,90,7
+37,Shaving Cream,Proraso Refreshing Eucalyptus Cream,10,120,7
+38,Moisturizer Men,Clinique For Men Oil-Free Hydrator,34,65,7
+39,After Shave Balm,Acqua di Parma Cooling Emulsion,75,20,7
+40,Eye Cream Men,Shiseido Men Total Revitalizer,50,30,7
+41,Hair Clay,Baxter of California Clay Pomade,23,80,7
+42,Deodorant Stick,Malin+Goetz Eucalyptus Deodorant,22,110,7
+43,Mini Mascara,Better Than Sex Travel Size Black,16,200,8
+44,Mini Setting Spray,Urban Decay All Nighter Travel,15,180,8
+45,Mini Lip Mask,Laneige Berry Lip Sleeping Mask,12,250,8
+46,Mini Dry Shampoo,Living Proof Perfect Hair Day,18,140,8
+47,Mini Glow Toner,Glow Recipe Watermelon PHA+BHA,15,100,8
+48,Mini Perfume,"YSL Libre Travel Spray, 10ml",30,75,8
+49,Mini Primer,Milk Makeup Hydro Grip Travel,20,95,8
+50,Mini Cleanser,"Fresh Soy Face Cleanser, 20ml",15,130,8
