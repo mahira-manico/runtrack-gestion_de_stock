@@ -39,6 +39,8 @@ class Dashboard(ctk.CTkFrame):
 
         self.search_entry=ctk.CTkEntry(self.action_bar, placeholder_text="Search a product (Dior, Fenty...)", width=400)
         self.search_entry.pack(side="left", padx=10)
+        self.entry_button=ctk.CTkButton(self.action_bar, text="Search",command=self.search)
+        self.entry_button.pack(side="left")
 
         self.add_button = ctk.CTkButton(self.action_bar, text="+ Add Product", fg_color="#E91E63", command=self.add_window)
         self.add_button.pack(side="right", padx=10)
@@ -51,18 +53,27 @@ class Dashboard(ctk.CTkFrame):
 
         self.refresh_products()
 
+    def search(self):
+        letter=self.search_entry.get()
+        result=self.products.get_product(letter)
+        
+        if result is not None:
+            self.refresh_products(products=result)
+
+
     def add_window(self):
         AddProduct(master=self, refresh_product=self.refresh_products)
 
     def delete_window(self):
         DeleteProduct(master=self, refresh_product=self.refresh_products)
 
-    def refresh_products(self):
+    def refresh_products(self,products=None):
 
         for infos in self.scrollable_list.winfo_children():
          infos.destroy()
         
-        products=self.products.get_all()
+        if products is None:
+         products=self.products.get_all()
          
         if products:
          for i in products:

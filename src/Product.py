@@ -11,14 +11,25 @@ class Product:
         try:
             self.cursor.execute("SELECT * FROM product")
             result=self.cursor.fetchall()
+            return result
 
         except Exception as e:
             print(f"Error: {e}")
-            return False
+            return None
         
-        finally:
-            self.connection.disconnect_cursor(self.cursor)
+    def get_product(self,letter):
+
+        try:
+            request="SELECT * FROM product WHERE name LIKE %s"
+            value=(f"%{letter}%",)
+            self.cursor.execute(request, value)
+            result=self.cursor.fetchall()
             return result
+        
+        except Exception as e:
+            print(f"Error: {e}")
+            return None
+    
         
     def add(self, name, description, price, quantity, id_category):
         
@@ -33,15 +44,10 @@ class Product:
             print(f"Error: {e}")
             return False
         
-        finally:
-            self.connection.disconnect_cursor(self.cursor)
     
     def update(self, column, new_value, id):
         
-        try:
-            if column not in ["name"]:
-                return False
-            
+        try:    
             request=f"UPDATE product SET {column}=%s WHERE id=%s"
             values=(new_value, id)
             self.cursor.execute(request, values)
@@ -51,10 +57,7 @@ class Product:
         except Exception as e:
             print(f"Error: {e}")
             return False
-        
-        finally:
-            self.connection.disconnect_cursor(self.cursor)
-
+     
     def delete(self, id):
         
         try:
@@ -67,10 +70,7 @@ class Product:
         except Exception as e:
             print(f"Error: {e}")
             return False
-        
-        finally:
-            self.connection.disconnect_cursor(self.cursor)
-
+   
 
 
 
