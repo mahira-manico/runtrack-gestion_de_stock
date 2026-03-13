@@ -46,10 +46,16 @@ class Dashboard(ctk.CTkFrame):
         self.scrollable_list = ctk.CTkScrollableFrame(self, label_text="Live Inventory")
         self.scrollable_list.grid(row=2, column=0, sticky="nsew", padx=20, pady=20)
 
+        self.delete_button=ctk.CTkButton(self.action_bar, text="- Delete a Product", command=self.delete_window)
+        self.delete_button.pack(side="right",padx=20)
+
         self.refresh_products()
 
     def add_window(self):
         AddProduct(master=self, refresh_product=self.refresh_products)
+
+    def delete_window(self):
+        DeleteProduct(master=self, refresh_product=self.refresh_products)
 
     def refresh_products(self):
 
@@ -62,12 +68,41 @@ class Dashboard(ctk.CTkFrame):
          for i in products:
              row=ctk.CTkFrame(self.scrollable_list)
              row.pack(fill="x", expand=True,pady=5,padx=10)
-
+ 
+             ctk.CTkLabel(row, text=i["id"],width=200).pack(side="left",pady=20)
              ctk.CTkLabel(row, text=i["name"],width=200).pack(side="left",pady=20)
              ctk.CTkLabel(row,text=i["description"],width=100).pack(side="left")
              ctk.CTkLabel(row,text=f"{i['price']}$",width=100).pack(side="right")
              ctk.CTkLabel(row,text=f"Stock: {i['quantity']}",width=100).pack(side="left")
-    
+
+class DeleteProduct(ctk.CTkToplevel):
+    def __init__(self, master, refresh_product):
+        super().__init__(master)
+        self.title("Delete a Product Here!")
+        self.geometry("400x300")
+        self.refresh=refresh_product
+        self.products=master.products
+
+        ctk.CTkLabel(self, text="Delete a Product").pack(pady=20)
+
+        self.id_entry=ctk.CTkEntry(self, placeholder_text="Enter Product ID",width=300)
+        self.id_entry.pack(pady=10)
+
+        self.save_button=ctk.CTkButton(self, text="Save to Database", command=self.delete_product)
+        self.save_button.pack(pady=20)
+        
+
+    def delete_product(self):
+
+        id=self.id_entry.get()
+
+        entry=self.products.delete(int(id))
+
+        if entry:
+            print("product succesfully deleted!")
+            self.refresh()
+            self.destroy()
+
 class AddProduct(ctk.CTkToplevel):
         def __init__(self, master,refresh_product):
             super().__init__(master)
@@ -111,3 +146,4 @@ class AddProduct(ctk.CTkToplevel):
                 self.refresh()
                 self.destroy()
 
+    
